@@ -2,6 +2,7 @@ package d2dc6
 
 import (
 	"github.com/OpenDiablo2/OpenDiablo2/d2common/d2datautils"
+	"github.com/gravestench/bitstream"
 )
 
 const (
@@ -64,7 +65,7 @@ func Load(data []byte) (*DC6, error) {
 func (d *DC6) Load(data []byte) error {
 	var err error
 
-	r := d2datautils.CreateStreamReader(data)
+	r := bitstream.FromBytes(data...)
 
 	err = d.loadHeader(r)
 	if err != nil {
@@ -75,7 +76,7 @@ func (d *DC6) Load(data []byte) error {
 
 	d.FramePointers = make([]uint32, frameCount)
 	for i := 0; i < frameCount; i++ {
-		d.FramePointers[i], err = r.ReadUInt32()
+		d.FramePointers[i], err = r.Next(4).Bytes().AsUInt32()
 		if err != nil {
 			return err
 		}
@@ -90,79 +91,81 @@ func (d *DC6) Load(data []byte) error {
 	return nil
 }
 
-func (d *DC6) loadHeader(r *d2datautils.StreamReader) error {
+func (d *DC6) loadHeader(r *bitstream.BitStream) error {
 	var err error
 
-	if d.Version, err = r.ReadInt32(); err != nil {
+	if d.Version, err = r.Next(4).Bytes().AsInt32(); err != nil {
 		return err
 	}
 
-	if d.Flags, err = r.ReadUInt32(); err != nil {
+	if d.Flags, err = r.Next(4).Bytes().AsUInt32(); err != nil {
 		return err
 	}
 
-	if d.Encoding, err = r.ReadUInt32(); err != nil {
+	if d.Encoding, err = r.Next(4).Bytes().AsUInt32(); err != nil {
 		return err
 	}
 
-	if d.Termination, err = r.ReadBytes(terminationSize); err != nil {
+	if d.Termination, err = r.Next(terminationSize).Bytes().AsBytes(); err != nil {
 		return err
 	}
 
-	if d.Directions, err = r.ReadUInt32(); err != nil {
+	if d.Directions, err = r.Next(4).Bytes().AsUInt32(); err != nil {
 		return err
 	}
 
-	if d.FramesPerDirection, err = r.ReadUInt32(); err != nil {
+	if d.FramesPerDirection, err = r.Next(4).Bytes().AsUInt32(); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (d *DC6) loadFrames(r *d2datautils.StreamReader) error {
+func (d *DC6) loadFrames(r *bitstream.BitStream) error {
 	var err error
+
+	r.Next(4) // set bytes len to uint32
 
 	for i := 0; i < len(d.FramePointers); i++ {
 		frame := &DC6Frame{}
 
-		if frame.Flipped, err = r.ReadUInt32(); err != nil {
+		if frame.Flipped, err = r.Bytes().AsUInt32(); err != nil {
 			return err
 		}
 
-		if frame.Width, err = r.ReadUInt32(); err != nil {
+		if frame.Width, err = r.Bytes().AsUInt32(); err != nil {
 			return err
 		}
 
-		if frame.Height, err = r.ReadUInt32(); err != nil {
+		if frame.Height, err = r.Bytes().AsUInt32(); err != nil {
 			return err
 		}
 
-		if frame.OffsetX, err = r.ReadInt32(); err != nil {
+		if frame.OffsetX, err = r.Bytes().AsInt32(); err != nil {
 			return err
 		}
 
-		if frame.OffsetY, err = r.ReadInt32(); err != nil {
+		if frame.OffsetY, err = r.Bytes().AsInt32(); err != nil {
 			return err
 		}
 
-		if frame.Unknown, err = r.ReadUInt32(); err != nil {
+		if frame.Unknown, err = r.Bytes().AsUInt32(); err != nil {
 			return err
 		}
 
-		if frame.NextBlock, err = r.ReadUInt32(); err != nil {
+		if frame.NextBlock, err = r.Bytes().AsUInt32(); err != nil {
 			return err
 		}
 
-		if frame.Length, err = r.ReadUInt32(); err != nil {
+		if frame.Length, err = r.Bytes().AsUInt32(); err != nil {
 			return err
 		}
 
-		if frame.FrameData, err = r.ReadBytes(int(frame.Length)); err != nil {
+		if frame.FrameData, err = r.Next(int(frame.Length)).Bytes().AsBytes(); err != nil {
 			return err
 		}
 
-		if frame.Terminator, err = r.ReadBytes(terminatorSize); err != nil {
+		if frame.Terminator, err = r.Next(terminatorSize).Bytes().AsBytes(); err != nil {
 			return err
 		}
 
