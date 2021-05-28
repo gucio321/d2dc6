@@ -73,7 +73,7 @@ linters:
     - unused
     - varcheck
     - whitespace
-    - wrapcheck
+      #- wrapcheck
     - wsl
 
 run:
