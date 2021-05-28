@@ -1,4 +1,4 @@
-module github.com/gucio321/d2d2s
+module github.com/gucio321/d2dc6
 
 go 1.16
 

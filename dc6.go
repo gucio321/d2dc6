@@ -5,6 +5,8 @@ import (
 
 	"github.com/OpenDiablo2/OpenDiablo2/d2common/d2datautils"
 
+	"github.com/gucio321/d2dc6/d2dc6frame"
+
 	"github.com/gravestench/bitstream"
 )
 
@@ -13,7 +15,6 @@ const (
 	maxRunLength  = 0x7f
 
 	terminationSize = 4
-	terminatorSize  = 3
 
 	bytesPerInt32 = 4
 )
@@ -34,8 +35,8 @@ type DC6 struct {
 	Termination        []byte // 4 bytes
 	Directions         uint32
 	FramesPerDirection uint32
-	FramePointers      []uint32    // size is Directions*FramesPerDirection
-	Frames             []*DC6Frame // size is Directions*FramesPerDirection
+	FramePointers      []uint32               // size is Directions*FramesPerDirection
+	Frames             []*d2dc6frame.DC6Frame // size is Directions*FramesPerDirection
 }
 
 // New creates a new, empty DC6
@@ -48,7 +49,7 @@ func New() *DC6 {
 		Directions:         0,
 		FramesPerDirection: 0,
 		FramePointers:      make([]uint32, 0),
-		Frames:             make([]*DC6Frame, 0),
+		Frames:             make([]*d2dc6frame.DC6Frame, 0),
 	}
 
 	return result
@@ -86,7 +87,7 @@ func (d *DC6) Load(data []byte) error {
 		}
 	}
 
-	d.Frames = make([]*DC6Frame, frameCount)
+	d.Frames = make([]*d2dc6frame.DC6Frame, frameCount)
 
 	if err := d.loadFrames(r); err != nil {
 		return fmt.Errorf("error loading frames: %w", err)
@@ -128,52 +129,11 @@ func (d *DC6) loadHeader(r *bitstream.BitStream) error {
 func (d *DC6) loadFrames(r *bitstream.BitStream) error {
 	var err error
 
-	r.Next(bytesPerInt32) // set bytes len to uint32
-
 	for i := 0; i < len(d.FramePointers); i++ {
-		frame := &DC6Frame{}
-
-		if frame.Flipped, err = r.Bytes().AsUInt32(); err != nil {
+		d.Frames[i], err = d2dc6frame.Load(r)
+		if err != nil {
 			return err
 		}
-
-		if frame.Width, err = r.Bytes().AsUInt32(); err != nil {
-			return err
-		}
-
-		if frame.Height, err = r.Bytes().AsUInt32(); err != nil {
-			return err
-		}
-
-		if frame.OffsetX, err = r.Bytes().AsInt32(); err != nil {
-			return err
-		}
-
-		if frame.OffsetY, err = r.Bytes().AsInt32(); err != nil {
-			return err
-		}
-
-		if frame.Unknown, err = r.Bytes().AsUInt32(); err != nil {
-			return err
-		}
-
-		if frame.NextBlock, err = r.Bytes().AsUInt32(); err != nil {
-			return err
-		}
-
-		if frame.Length, err = r.Bytes().AsUInt32(); err != nil {
-			return err
-		}
-
-		if frame.FrameData, err = r.Next(int(frame.Length)).Bytes().AsBytes(); err != nil {
-			return err
-		}
-
-		if frame.Terminator, err = r.Next(terminatorSize).Bytes().AsBytes(); err != nil {
-			return err
-		}
-
-		d.Frames[i] = frame
 	}
 
 	return nil
@@ -270,7 +230,7 @@ func (d *DC6) Clone() *DC6 {
 	clone := *d
 	copy(clone.Termination, d.Termination)
 	copy(clone.FramePointers, d.FramePointers)
-	clone.Frames = make([]*DC6Frame, len(d.Frames))
+	clone.Frames = make([]*d2dc6frame.DC6Frame, len(d.Frames))
 
 	for i := range d.Frames {
 		cloneFrame := *d.Frames[i]
