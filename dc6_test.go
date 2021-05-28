@@ -7,9 +7,7 @@ import (
 )
 
 func TestDC6New(t *testing.T) {
-	dc6 := New()
-
-	if dc6 == nil {
+	if dc6 := New(); dc6 == nil {
 		t.Error("d2dc6.New() method returned nil")
 	}
 }

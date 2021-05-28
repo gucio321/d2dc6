@@ -1,7 +1,10 @@
 package d2dc6
 
 import (
+	"fmt"
+
 	"github.com/OpenDiablo2/OpenDiablo2/d2common/d2datautils"
+
 	"github.com/gravestench/bitstream"
 )
 
@@ -11,6 +14,8 @@ const (
 
 	terminationSize = 4
 	terminatorSize  = 3
+
+	bytesPerInt32 = 4
 )
 
 type scanlineState int
@@ -53,8 +58,7 @@ func New() *DC6 {
 func Load(data []byte) (*DC6, error) {
 	d := New()
 
-	err := d.Load(data)
-	if err != nil {
+	if err := d.Load(data); err != nil {
 		return nil, err
 	}
 
@@ -76,7 +80,7 @@ func (d *DC6) Load(data []byte) error {
 
 	d.FramePointers = make([]uint32, frameCount)
 	for i := 0; i < frameCount; i++ {
-		d.FramePointers[i], err = r.Next(4).Bytes().AsUInt32()
+		d.FramePointers[i], err = r.Next(bytesPerInt32).Bytes().AsUInt32()
 		if err != nil {
 			return err
 		}
@@ -85,7 +89,7 @@ func (d *DC6) Load(data []byte) error {
 	d.Frames = make([]*DC6Frame, frameCount)
 
 	if err := d.loadFrames(r); err != nil {
-		return err
+		return fmt.Errorf("error loading frames: %w", err)
 	}
 
 	return nil
@@ -94,15 +98,15 @@ func (d *DC6) Load(data []byte) error {
 func (d *DC6) loadHeader(r *bitstream.BitStream) error {
 	var err error
 
-	if d.Version, err = r.Next(4).Bytes().AsInt32(); err != nil {
+	if d.Version, err = r.Next(bytesPerInt32).Bytes().AsInt32(); err != nil {
 		return err
 	}
 
-	if d.Flags, err = r.Next(4).Bytes().AsUInt32(); err != nil {
+	if d.Flags, err = r.Bytes().AsUInt32(); err != nil {
 		return err
 	}
 
-	if d.Encoding, err = r.Next(4).Bytes().AsUInt32(); err != nil {
+	if d.Encoding, err = r.Bytes().AsUInt32(); err != nil {
 		return err
 	}
 
@@ -110,11 +114,11 @@ func (d *DC6) loadHeader(r *bitstream.BitStream) error {
 		return err
 	}
 
-	if d.Directions, err = r.Next(4).Bytes().AsUInt32(); err != nil {
+	if d.Directions, err = r.Next(bytesPerInt32).Bytes().AsUInt32(); err != nil {
 		return err
 	}
 
-	if d.FramesPerDirection, err = r.Next(4).Bytes().AsUInt32(); err != nil {
+	if d.FramesPerDirection, err = r.Bytes().AsUInt32(); err != nil {
 		return err
 	}
 
@@ -124,7 +128,7 @@ func (d *DC6) loadHeader(r *bitstream.BitStream) error {
 func (d *DC6) loadFrames(r *bitstream.BitStream) error {
 	var err error
 
-	r.Next(4) // set bytes len to uint32
+	r.Next(bytesPerInt32) // set bytes len to uint32
 
 	for i := 0; i < len(d.FramePointers); i++ {
 		frame := &DC6Frame{}
