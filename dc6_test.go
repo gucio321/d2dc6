@@ -2,6 +2,8 @@ package d2dc6
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestDC6New(t *testing.T) {
@@ -50,20 +52,12 @@ func TestDC6Unmarshal(t *testing.T) {
 		t.Error(err)
 	}
 
-	if exampleDC6.Version != extractedDC6.Version ||
-		len(exampleDC6.Frames) != len(extractedDC6.Frames) ||
-		exampleDC6.Frames[0].NextBlock != extractedDC6.Frames[0].NextBlock {
-		t.Fatal("encoded and decoded DC6 isn't the same")
-	}
+	assert.Equal(t, exampleDC6, extractedDC6, "encoded and decoded dc6 isn't equal")
 }
 
 func TestDC6Clone(t *testing.T) {
 	exampleDC6 := getExampleDC6()
 	clonedDC6 := exampleDC6.Clone()
 
-	if exampleDC6.Termination[0] != clonedDC6.Termination[0] ||
-		len(exampleDC6.Frames) != len(clonedDC6.Frames) ||
-		exampleDC6.Frames[0].NextBlock != clonedDC6.Frames[0].NextBlock {
-		t.Fatal("cloned dc6 isn't equal to original")
-	}
+	assert.Equal(t, exampleDC6, clonedDC6, "cloned dc6 isn't equal to base")
 }
