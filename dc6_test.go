@@ -22,18 +22,20 @@ func getExampleDC6() *DC6 {
 		Directions:         1,
 		FramesPerDirection: 1,
 		FramePointers:      []uint32{56},
-		Frames: []*d2dc6frame.DC6Frame{
+		Frames: [][]*d2dc6frame.DC6Frame{
 			{
-				Flipped:    0,
-				Width:      32,
-				Height:     26,
-				OffsetX:    45,
-				OffsetY:    24,
-				Unknown:    0,
-				NextBlock:  50,
-				Length:     10,
-				FrameData:  []byte{2, 23, 34, 128, 53, 64, 39, 43, 123, 12},
-				Terminator: []byte{2, 8, 5},
+				{
+					Flipped:    0,
+					Width:      32,
+					Height:     26,
+					OffsetX:    45,
+					OffsetY:    24,
+					Unknown:    0,
+					NextBlock:  50,
+					Length:     10,
+					FrameData:  []byte{2, 23, 34, 128, 53, 64, 39, 43, 123, 12},
+					Terminator: []byte{2, 8, 5},
+				},
 			},
 		},
 	}

@@ -1,6 +1,10 @@
 package d2dc6frame
 
-import "github.com/gravestench/bitstream"
+import (
+	"github.com/OpenDiablo2/OpenDiablo2/d2common/d2datautils"
+
+	"github.com/gravestench/bitstream"
+)
 
 const (
 	bytesPerInt32  = 4
@@ -70,4 +74,21 @@ func Load(r *bitstream.BitStream) (*DC6Frame, error) {
 	}
 
 	return frame, nil
+}
+
+// Encode encodes frame data into a byte slice
+func (f *DC6Frame) Encode() []byte {
+	sw := d2datautils.CreateStreamWriter()
+	sw.PushUint32(f.Flipped)
+	sw.PushUint32(f.Width)
+	sw.PushUint32(f.Height)
+	sw.PushInt32(f.OffsetX)
+	sw.PushInt32(f.OffsetY)
+	sw.PushUint32(f.Unknown)
+	sw.PushUint32(f.NextBlock)
+	sw.PushUint32(f.Length)
+	sw.PushBytes(f.FrameData...)
+	sw.PushBytes(f.Terminator...)
+
+	return sw.GetBytes()
 }
