@@ -154,8 +154,8 @@ func (d *DC6) loadFrames(r *bitstream.BitStream) error {
 	return nil
 }
 
-// Marshal encodes dc6 animation back into byte slice
-func (d *DC6) Marshal() []byte {
+// Encode encodes dc6 animation back into byte slice
+func (d *DC6) Encode() []byte {
 	sw := d2datautils.CreateStreamWriter()
 
 	// Encode header

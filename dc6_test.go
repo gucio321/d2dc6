@@ -79,7 +79,7 @@ func getExampleDC6() *DC6 {
 func TestDC6Unmarshal(t *testing.T) {
 	exampleDC6 := getExampleDC6()
 
-	data := exampleDC6.Marshal()
+	data := exampleDC6.Encode()
 
 	extractedDC6, err := Load(data)
 	if err != nil {
