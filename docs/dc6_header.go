@@ -1,4 +1,4 @@
-// Package docs contains a documentation data
+// Package docs contains a documentation files (unused in real module)
 package docs
 
 // DC6Header represents the file header of a DC6 file.
