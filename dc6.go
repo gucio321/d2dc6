@@ -78,6 +78,7 @@ func (d *DC6) Load(data []byte) error {
 	}
 
 	frameCount := int(d.Directions * d.FramesPerDirection)
+	fmt.Println(frameCount)
 
 	d.FramePointers = make([]uint32, frameCount)
 	for i := 0; i < frameCount; i++ {
@@ -170,7 +171,8 @@ func (d *DC6) Marshal() []byte {
 
 	for dir := range d.Frames {
 		for f := range d.Frames[dir] {
-			sw.PushBytes(d.Frames[dir][f].Encode()...)
+			data := d.Frames[dir][f].Encode()
+			sw.PushBytes(data...)
 		}
 	}
 
@@ -179,7 +181,7 @@ func (d *DC6) Marshal() []byte {
 
 // DecodeFrame decodes the given frame to an indexed color texture
 func (d *DC6) DecodeFrame(frameIndex int) []byte {
-	frame := d.Frames[frameIndex/int(d.FramesPerDirection)][frameIndex%int(d.FramesPerDirection)]
+	frame := d.Frames[(frameIndex/int(d.FramesPerDirection))-1][frameIndex%int(d.FramesPerDirection)]
 
 	indexData := make([]byte, frame.Width*frame.Height)
 	x := 0
