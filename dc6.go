@@ -1,6 +1,7 @@
 package d2dc6
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/OpenDiablo2/OpenDiablo2/d2common/d2datautils"
@@ -17,6 +18,8 @@ const (
 	terminationSize = 4
 
 	bytesPerInt32 = 4
+
+	expectedDC6Version = 6
 )
 
 type scanlineState int
@@ -29,7 +32,6 @@ const (
 
 // DC6 represents a DC6 file.
 type DC6 struct {
-	Version            int32
 	Flags              uint32
 	Encoding           uint32
 	Termination        []byte // 4 bytes
@@ -42,7 +44,6 @@ type DC6 struct {
 // New creates a new, empty DC6
 func New() *DC6 {
 	result := &DC6{
-		Version:            0,
 		Flags:              0,
 		Encoding:           0,
 		Termination:        make([]byte, 4),
@@ -105,8 +106,13 @@ func (d *DC6) loadHeader(r *bitstream.BitStream) error {
 
 	r.Next(bytesPerInt32) // set readed data size to 4 bytes
 
-	if d.Version, err = r.Bytes().AsInt32(); err != nil {
+	version, err := r.Bytes().AsInt32()
+	if err != nil {
 		return err
+	}
+
+	if version != expectedDC6Version {
+		return errors.New("unexpected dc6 version")
 	}
 
 	if d.Flags, err = r.Bytes().AsUInt32(); err != nil {
@@ -155,7 +161,7 @@ func (d *DC6) Marshal() []byte {
 	sw := d2datautils.CreateStreamWriter()
 
 	// Encode header
-	sw.PushInt32(d.Version)
+	sw.PushInt32(expectedDC6Version)
 	sw.PushUint32(d.Flags)
 	sw.PushUint32(d.Encoding)
 

@@ -15,7 +15,6 @@ func TestDC6New(t *testing.T) {
 
 func getExampleDC6() *DC6 {
 	exampleDC6 := &DC6{
-		Version:            6,
 		Flags:              1,
 		Encoding:           0,
 		Termination:        []byte{238, 238, 238, 238},
