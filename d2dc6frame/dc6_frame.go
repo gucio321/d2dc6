@@ -20,8 +20,7 @@ type DC6Frame struct {
 	OffsetY    int32
 	Unknown    uint32
 	NextBlock  uint32
-	Length     uint32
-	FrameData  []byte // size is the value of Length
+	FrameData  []byte
 	Terminator []byte // 3 bytes
 }
 
@@ -61,11 +60,12 @@ func Load(r *bitstream.BitStream) (*DC6Frame, error) {
 		return nil, err
 	}
 
-	if frame.Length, err = r.Bytes().AsUInt32(); err != nil {
+	l, err := r.Bytes().AsUInt32()
+	if err != nil {
 		return nil, err
 	}
 
-	if frame.FrameData, err = r.Next(int(frame.Length)).Bytes().AsBytes(); err != nil {
+	if frame.FrameData, err = r.Next(int(l)).Bytes().AsBytes(); err != nil {
 		return nil, err
 	}
 
@@ -86,7 +86,7 @@ func (f *DC6Frame) Encode() []byte {
 	sw.PushInt32(f.OffsetY)
 	sw.PushUint32(f.Unknown)
 	sw.PushUint32(f.NextBlock)
-	sw.PushUint32(f.Length)
+	sw.PushUint32(uint32(len(f.FrameData)))
 	sw.PushBytes(f.FrameData...)
 	sw.PushBytes(f.Terminator...)
 
