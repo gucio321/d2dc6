@@ -168,11 +168,12 @@ func (d *DC6) Encode() []byte {
 	sw.PushUint32(d.Directions)
 	sw.PushUint32(d.FramesPerDirection)
 
-	// load frames
+	// encode frame pointers
 	for _, i := range d.FramePointers {
 		sw.PushUint32(i)
 	}
 
+	// encode frames
 	for dir := range d.Frames {
 		for f := range d.Frames[dir] {
 			data := d.Frames[dir][f].Encode()
