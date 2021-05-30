@@ -1,6 +1,8 @@
-package d2dc6
+// Package docs contains a documentation data
+package docs
 
 // DC6Header represents the file header of a DC6 file.
+// this structure is unused in this module and is only a documentation
 type DC6Header struct {
 	Version            int32  `struct:"int32"`
 	Flags              uint32 `struct:"uint32"`
