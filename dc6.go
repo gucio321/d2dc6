@@ -79,7 +79,6 @@ func (d *DC6) Load(data []byte) error {
 	}
 
 	frameCount := int(d.Directions * d.FramesPerDirection)
-	fmt.Println(frameCount)
 
 	d.FramePointers = make([]uint32, frameCount)
 	for i := 0; i < frameCount; i++ {
