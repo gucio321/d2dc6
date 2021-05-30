@@ -143,7 +143,6 @@ func (d *DC6) loadFrames(r *bitstream.BitStream) error {
 	var err error
 
 	for dir := range d.Frames {
-		// for i := 0; i < len(d.FramePointers); i++ {
 		for f := range d.Frames[dir] {
 			d.Frames[dir][f], err = d2dc6frame.Load(r)
 			if err != nil {
