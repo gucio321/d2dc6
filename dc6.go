@@ -84,7 +84,7 @@ func (d *DC6) Load(data []byte) error {
 	for i := 0; i < frameCount; i++ {
 		d.FramePointers[i], err = r.Next(bytesPerInt32).Bytes().AsUInt32()
 		if err != nil {
-			return err
+			return fmt.Errorf("reading pointer to frame %d: %w", i, err)
 		}
 	}
 
@@ -93,11 +93,7 @@ func (d *DC6) Load(data []byte) error {
 		d.Frames[i] = make([]*d2dc6frame.DC6Frame, d.FramesPerDirection)
 	}
 
-	if err := d.loadFrames(r); err != nil {
-		return fmt.Errorf("error loading frames: %w", err)
-	}
-
-	return nil
+	return d.loadFrames(r)
 }
 
 func (d *DC6) loadHeader(r *bitstream.BitStream) error {
@@ -107,7 +103,7 @@ func (d *DC6) loadHeader(r *bitstream.BitStream) error {
 
 	version, err := r.Bytes().AsInt32()
 	if err != nil {
-		return err
+		return fmt.Errorf("reading version: %w", err)
 	}
 
 	if version != expectedDC6Version {
@@ -115,25 +111,25 @@ func (d *DC6) loadHeader(r *bitstream.BitStream) error {
 	}
 
 	if d.Flags, err = r.Bytes().AsUInt32(); err != nil {
-		return err
+		return fmt.Errorf("reading flags: %w", err)
 	}
 
 	if d.Encoding, err = r.Bytes().AsUInt32(); err != nil {
-		return err
+		return fmt.Errorf("reading encoding type: %w", err)
 	}
 
 	if d.Termination, err = r.Next(terminationSize).Bytes().AsBytes(); err != nil {
-		return err
+		return fmt.Errorf("reading termination: %w", err)
 	}
 
 	r.Next(bytesPerInt32) // set readed data size to 4 bytes
 
 	if d.Directions, err = r.Bytes().AsUInt32(); err != nil {
-		return err
+		return fmt.Errorf("reading directions number: %w", err)
 	}
 
 	if d.FramesPerDirection, err = r.Bytes().AsUInt32(); err != nil {
-		return err
+		return fmt.Errorf("error reading a number of frames per direction: %w", err)
 	}
 
 	return nil
@@ -146,7 +142,7 @@ func (d *DC6) loadFrames(r *bitstream.BitStream) error {
 		for f := range d.Frames[dir] {
 			d.Frames[dir][f], err = d2dc6frame.Load(r)
 			if err != nil {
-				return err
+				return fmt.Errorf("error loading frame %d at direction %d: %w", f, dir, err)
 			}
 		}
 	}
