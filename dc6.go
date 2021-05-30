@@ -180,8 +180,8 @@ func (d *DC6) Marshal() []byte {
 }
 
 // DecodeFrame decodes the given frame to an indexed color texture
-func (d *DC6) DecodeFrame(frameIndex int) []byte {
-	frame := d.Frames[(frameIndex/int(d.FramesPerDirection))-1][frameIndex%int(d.FramesPerDirection)]
+func (d *DC6) DecodeFrame(directionIndex, frameIndex int) []byte {
+	frame := d.Frames[directionIndex][frameIndex]
 
 	indexData := make([]byte, frame.Width*frame.Height)
 	x := 0
