@@ -37,8 +37,8 @@ type DC6 struct {
 	Termination        []byte // 4 bytes
 	Directions         uint32
 	FramesPerDirection uint32
-	FramePointers      []uint32              // size is Directions*FramesPerDirection
-	Frames             [][]*d2dc6frame.Frame // size is Directions*FramesPerDirection
+	FramePointers      []uint32             // size is Directions*FramesPerDirection
+	Frames             d2dc6frame.FrameGrid // size is Directions*FramesPerDirection
 }
 
 // New creates a new, empty DC6
@@ -50,7 +50,7 @@ func New() *DC6 {
 		Directions:         0,
 		FramesPerDirection: 0,
 		FramePointers:      make([]uint32, 0),
-		Frames:             make([][]*d2dc6frame.Frame, 0),
+		Frames:             make(d2dc6frame.FrameGrid, 0),
 	}
 
 	return result
@@ -88,9 +88,9 @@ func (d *DC6) Load(data []byte) error {
 		}
 	}
 
-	d.Frames = make([][]*d2dc6frame.Frame, d.Directions)
+	d.Frames = make(d2dc6frame.FrameGrid, d.Directions)
 	for i := range d.Frames {
-		d.Frames[i] = make([]*d2dc6frame.Frame, d.FramesPerDirection)
+		d.Frames[i] = make(d2dc6frame.Direction, d.FramesPerDirection)
 	}
 
 	return d.loadFrames(r)
@@ -236,10 +236,10 @@ func (d *DC6) Clone() *DC6 {
 	clone := *d
 	copy(clone.Termination, d.Termination)
 	copy(clone.FramePointers, d.FramePointers)
-	clone.Frames = make([][]*d2dc6frame.Frame, len(d.Frames))
+	clone.Frames = make(d2dc6frame.FrameGrid, len(d.Frames))
 
 	for dir := range clone.Frames {
-		clone.Frames[dir] = make([]*d2dc6frame.Frame, len(d.Frames[dir]))
+		clone.Frames[dir] = make(d2dc6frame.Direction, len(d.Frames[dir]))
 	}
 
 	for dir := range d.Frames {
