@@ -5,8 +5,7 @@ import (
 	"fmt"
 
 	"github.com/OpenDiablo2/OpenDiablo2/d2common/d2datautils"
-
-	"github.com/gucio321/d2dc6/d2dc6frame"
+	"github.com/gucio321/d2dc6/dc6frames"
 
 	"github.com/gravestench/bitstream"
 )
@@ -37,8 +36,8 @@ type DC6 struct {
 	Termination        []byte // 4 bytes
 	Directions         uint32
 	FramesPerDirection uint32
-	FramePointers      []uint32             // size is Directions*FramesPerDirection
-	Frames             d2dc6frame.FrameGrid // size is Directions*FramesPerDirection
+	FramePointers      []uint32            // size is Directions*FramesPerDirection
+	Frames             dc6frames.FrameGrid // size is Directions*FramesPerDirection
 }
 
 // New creates a new, empty DC6
@@ -50,7 +49,7 @@ func New() *DC6 {
 		Directions:         0,
 		FramesPerDirection: 0,
 		FramePointers:      make([]uint32, 0),
-		Frames:             make(d2dc6frame.FrameGrid, 0),
+		Frames:             make(dc6frames.FrameGrid, 0),
 	}
 
 	return result
@@ -88,9 +87,9 @@ func (d *DC6) Load(data []byte) error {
 		}
 	}
 
-	d.Frames = make(d2dc6frame.FrameGrid, d.Directions)
+	d.Frames = make(dc6frames.FrameGrid, d.Directions)
 	for i := range d.Frames {
-		d.Frames[i] = make(d2dc6frame.Direction, d.FramesPerDirection)
+		d.Frames[i] = make(dc6frames.Direction, d.FramesPerDirection)
 	}
 
 	return d.loadFrames(r)
@@ -140,7 +139,7 @@ func (d *DC6) loadFrames(r *bitstream.Reader) error {
 
 	for dir := range d.Frames {
 		for f := range d.Frames[dir] {
-			d.Frames[dir][f], err = d2dc6frame.Load(r)
+			d.Frames[dir][f], err = dc6frames.Load(r)
 			if err != nil {
 				return fmt.Errorf("error loading frame %d at direction %d: %w", f, dir, err)
 			}
@@ -236,10 +235,10 @@ func (d *DC6) Clone() *DC6 {
 	clone := *d
 	copy(clone.Termination, d.Termination)
 	copy(clone.FramePointers, d.FramePointers)
-	clone.Frames = make(d2dc6frame.FrameGrid, len(d.Frames))
+	clone.Frames = make(dc6frames.FrameGrid, len(d.Frames))
 
 	for dir := range clone.Frames {
-		clone.Frames[dir] = make(d2dc6frame.Direction, len(d.Frames[dir]))
+		clone.Frames[dir] = make(dc6frames.Direction, len(d.Frames[dir]))
 	}
 
 	for dir := range d.Frames {

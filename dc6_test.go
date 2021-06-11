@@ -3,7 +3,7 @@ package d2dc6
 import (
 	"testing"
 
-	"github.com/gucio321/d2dc6/d2dc6frame"
+	"github.com/gucio321/d2dc6/dc6frames"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -21,7 +21,7 @@ func getExampleDC6() *DC6 {
 		Directions:         2,
 		FramesPerDirection: 2,
 		FramePointers:      []uint32{56, 100, 140, 180},
-		Frames: d2dc6frame.FrameGrid{
+		Frames: dc6frames.FrameGrid{
 			{
 				{
 					Flipped:    0,
