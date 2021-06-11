@@ -21,7 +21,7 @@ func getExampleDC6() *DC6 {
 		Directions:         2,
 		FramesPerDirection: 2,
 		FramePointers:      []uint32{56, 100, 140, 180},
-		Frames: [][]*d2dc6frame.DC6Frame{
+		Frames: [][]*d2dc6frame.Frame{
 			{
 				{
 					Flipped:    0,
