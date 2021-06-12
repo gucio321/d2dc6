@@ -9,16 +9,19 @@ func New() *FrameGrid {
 	}
 }
 
+// FrameGrid represents a grid of frames [directions][framesPerDirection]
 type FrameGrid struct {
 	grid []Direction
 	numberOfDirections,
 	framesPerDirection int
 }
 
+// NumberOfDirections returns a number of directions in grid
 func (f *FrameGrid) NumberOfDirections() int {
 	return f.numberOfDirections
 }
 
+// SetNumberOfDirections sets a number of directions
 func (f *FrameGrid) SetNumberOfDirections(n int) {
 	if n == f.numberOfDirections {
 		return
@@ -30,6 +33,7 @@ func (f *FrameGrid) SetNumberOfDirections(n int) {
 		}
 
 		f.numberOfDirections = n
+
 		return
 	}
 
@@ -38,10 +42,12 @@ func (f *FrameGrid) SetNumberOfDirections(n int) {
 	f.numberOfDirections = n
 }
 
+// FramesPerDirection returns a number of frames per each direction
 func (f *FrameGrid) FramesPerDirection() int {
 	return f.framesPerDirection
 }
 
+// SetFramesPerDirection sets a number of frames per direction
 func (f *FrameGrid) SetFramesPerDirection(n int) {
 	if n == f.framesPerDirection {
 		return
@@ -58,6 +64,7 @@ func (f *FrameGrid) SetFramesPerDirection(n int) {
 	f.framesPerDirection = n
 }
 
+// Direction returns a specified direction
 func (f *FrameGrid) Direction(d int) Direction {
 	if d > len(f.grid) {
 		return nil
@@ -66,6 +73,7 @@ func (f *FrameGrid) Direction(d int) Direction {
 	return f.grid[d]
 }
 
+// Clone clones frame grid
 func (f *FrameGrid) Clone() *FrameGrid {
 	clone := &FrameGrid{}
 	clone.SetNumberOfDirections(f.numberOfDirections)
@@ -80,8 +88,10 @@ func (f *FrameGrid) Clone() *FrameGrid {
 	return clone
 }
 
+// Direction represents a frame set
 type Direction []*Frame
 
+// Frame returns a specified frame, if f > FramesPerDirection, returns nil
 func (d Direction) Frame(f int) *Frame {
 	if f > len(d) {
 		return nil

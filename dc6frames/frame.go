@@ -34,36 +34,36 @@ type Frame struct {
 }
 
 // Load loads frame data
-func (frame *Frame) Load(r *bitstream.BitStream) error {
+func (f *Frame) Load(r *bitstream.BitStream) error {
 	var err error
 
 	r.Next(bytesPerInt32) // set bytes len to uint32
 
-	if frame.Flipped, err = r.Bytes().AsUInt32(); err != nil {
+	if f.Flipped, err = r.Bytes().AsUInt32(); err != nil {
 		return fmt.Errorf("reading flipped: %w", err)
 	}
 
-	if frame.Width, err = r.Bytes().AsUInt32(); err != nil {
+	if f.Width, err = r.Bytes().AsUInt32(); err != nil {
 		return fmt.Errorf("reading width: %w", err)
 	}
 
-	if frame.Height, err = r.Bytes().AsUInt32(); err != nil {
+	if f.Height, err = r.Bytes().AsUInt32(); err != nil {
 		return fmt.Errorf("reading height: %w", err)
 	}
 
-	if frame.OffsetX, err = r.Bytes().AsInt32(); err != nil {
+	if f.OffsetX, err = r.Bytes().AsInt32(); err != nil {
 		return fmt.Errorf("reading x-offset: %w", err)
 	}
 
-	if frame.OffsetY, err = r.Bytes().AsInt32(); err != nil {
+	if f.OffsetY, err = r.Bytes().AsInt32(); err != nil {
 		return fmt.Errorf("reading y-offset: %w", err)
 	}
 
-	if frame.Unknown, err = r.Bytes().AsUInt32(); err != nil {
+	if f.Unknown, err = r.Bytes().AsUInt32(); err != nil {
 		return fmt.Errorf("reading frame unknown: %w", err)
 	}
 
-	if frame.NextBlock, err = r.Bytes().AsUInt32(); err != nil {
+	if f.NextBlock, err = r.Bytes().AsUInt32(); err != nil {
 		return fmt.Errorf("reading next block: %w", err)
 	}
 
@@ -72,11 +72,11 @@ func (frame *Frame) Load(r *bitstream.BitStream) error {
 		return fmt.Errorf("reading length of frame data: %w", err)
 	}
 
-	if frame.FrameData, err = r.Next(int(l)).Bytes().AsBytes(); err != nil {
+	if f.FrameData, err = r.Next(int(l)).Bytes().AsBytes(); err != nil {
 		return fmt.Errorf("reading frame data: %w", err)
 	}
 
-	if frame.Terminator, err = r.Next(terminatorSize).Bytes().AsBytes(); err != nil {
+	if f.Terminator, err = r.Next(terminatorSize).Bytes().AsBytes(); err != nil {
 		return fmt.Errorf("reading terminator: %w", err)
 	}
 
@@ -85,7 +85,6 @@ func (frame *Frame) Load(r *bitstream.BitStream) error {
 
 // Encode encodes frame data into a byte slice
 func (f *Frame) Encode() []byte {
-	fmt.Println("encode")
 	sw := d2datautils.CreateStreamWriter()
 	sw.PushUint32(f.Flipped)
 	sw.PushUint32(f.Width)

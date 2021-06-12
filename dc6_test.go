@@ -3,8 +3,9 @@ package d2dc6
 import (
 	"testing"
 
-	"github.com/gucio321/d2dc6/dc6frames"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/gucio321/d2dc6/dc6frames"
 )
 
 func TestDC6New(t *testing.T) {

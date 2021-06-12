@@ -1,2 +1,2 @@
-// Package d2dc6frame process dc6 frame data
+// Package dc6frames process dc6 frame data
 package dc6frames

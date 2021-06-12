@@ -4,10 +4,11 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/OpenDiablo2/OpenDiablo2/d2common/d2datautils"
 	"github.com/gucio321/d2dc6/dc6frames"
 
 	"github.com/gravestench/bitstream"
+
+	"github.com/OpenDiablo2/OpenDiablo2/d2common/d2datautils"
 )
 
 const (
@@ -73,7 +74,7 @@ func (d *DC6) Load(data []byte) error {
 		return err
 	}
 
-	frameCount := int(d.Frames.NumberOfDirections() * d.Frames.FramesPerDirection())
+	frameCount := d.Frames.NumberOfDirections() * d.Frames.FramesPerDirection()
 
 	d.FramePointers = make([]uint32, frameCount)
 	for i := 0; i < frameCount; i++ {
