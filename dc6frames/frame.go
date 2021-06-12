@@ -27,55 +27,53 @@ type Frame struct {
 }
 
 // Load loads frame data
-func Load(r *bitstream.BitStream) (*Frame, error) {
+func (frame *Frame) Load(r *bitstream.BitStream) error {
 	var err error
-
-	frame := &Frame{}
 
 	r.Next(bytesPerInt32) // set bytes len to uint32
 
 	if frame.Flipped, err = r.Bytes().AsUInt32(); err != nil {
-		return nil, fmt.Errorf("reading flipped: %w", err)
+		return fmt.Errorf("reading flipped: %w", err)
 	}
 
 	if frame.Width, err = r.Bytes().AsUInt32(); err != nil {
-		return nil, fmt.Errorf("reading width: %w", err)
+		return fmt.Errorf("reading width: %w", err)
 	}
 
 	if frame.Height, err = r.Bytes().AsUInt32(); err != nil {
-		return nil, fmt.Errorf("reading height: %w", err)
+		return fmt.Errorf("reading height: %w", err)
 	}
 
 	if frame.OffsetX, err = r.Bytes().AsInt32(); err != nil {
-		return nil, fmt.Errorf("reading x-offset: %w", err)
+		return fmt.Errorf("reading x-offset: %w", err)
 	}
 
 	if frame.OffsetY, err = r.Bytes().AsInt32(); err != nil {
-		return nil, fmt.Errorf("reading y-offset: %w", err)
+		return fmt.Errorf("reading y-offset: %w", err)
 	}
 
 	if frame.Unknown, err = r.Bytes().AsUInt32(); err != nil {
-		return nil, fmt.Errorf("reading frame unknown: %w", err)
+		return fmt.Errorf("reading frame unknown: %w", err)
 	}
 
 	if frame.NextBlock, err = r.Bytes().AsUInt32(); err != nil {
-		return nil, fmt.Errorf("reading next block: %w", err)
+		return fmt.Errorf("reading next block: %w", err)
 	}
 
 	l, err := r.Bytes().AsUInt32()
 	if err != nil {
-		return nil, fmt.Errorf("reading length of frame data: %w", err)
+		return fmt.Errorf("reading length of frame data: %w", err)
 	}
 
 	if frame.FrameData, err = r.Next(int(l)).Bytes().AsBytes(); err != nil {
-		return nil, fmt.Errorf("reading frame data: %w", err)
+		return fmt.Errorf("reading frame data: %w", err)
 	}
 
 	if frame.Terminator, err = r.Next(terminatorSize).Bytes().AsBytes(); err != nil {
-		return nil, fmt.Errorf("reading terminator: %w", err)
+		return fmt.Errorf("reading terminator: %w", err)
 	}
 
-	return frame, nil
+	return nil
 }
 
 // Encode encodes frame data into a byte slice

@@ -18,11 +18,17 @@ func getExampleDC6() *DC6 {
 		Flags:              1,
 		Encoding:           0,
 		Termination:        []byte{238, 238, 238, 238},
-		Directions:         2,
-		FramesPerDirection: 2,
-		FramePointers:      []uint32{56, 100, 140, 180},
-		Frames: dc6frames.FrameGrid{
-			{
+		Directions:         0,
+		FramesPerDirection: 0,
+		// FramePointers:      []uint32{56, 100, 140, 180},
+		FramePointers: []uint32{},
+		Frames:        dc6frames.New(),
+	}
+
+	exampleDC6.Frames.SetNumberOfDirections(int(exampleDC6.Directions))
+	exampleDC6.Frames.SetFramesPerDirection(int(exampleDC6.FramesPerDirection))
+	/*
+			grid: {
 				{
 					Flipped:    0,
 					Width:      32,
@@ -71,7 +77,7 @@ func getExampleDC6() *DC6 {
 				},
 			},
 		},
-	}
+	*/
 
 	return exampleDC6
 }
