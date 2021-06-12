@@ -34,9 +34,9 @@ const (
 type DC6 struct {
 	Flags         uint32
 	Encoding      uint32
-	Termination   []byte               // 4 bytes
-	FramePointers []uint32             // size is Directions*FramesPerDirection
-	Frames        *dc6frames.FrameGrid // size is Directions*FramesPerDirection
+	Termination   [terminationSize]byte // 4 bytes
+	FramePointers []uint32              // size is Directions*FramesPerDirection
+	Frames        *dc6frames.FrameGrid  // size is Directions*FramesPerDirection
 }
 
 // New creates a new, empty DC6
@@ -44,7 +44,6 @@ func New() *DC6 {
 	result := &DC6{
 		Flags:         0,
 		Encoding:      0,
-		Termination:   make([]byte, 4),
 		FramePointers: make([]uint32, 0),
 		Frames:        dc6frames.New(),
 	}
@@ -109,9 +108,12 @@ func (d *DC6) loadHeader(r *bitstream.Reader) error {
 		return fmt.Errorf("reading encoding type: %w", err)
 	}
 
-	if d.Termination, err = r.Next(terminationSize).Bytes().AsBytes(); err != nil {
+	termination, err := r.Next(terminationSize).Bytes().AsBytes()
+	if err != nil {
 		return fmt.Errorf("reading termination: %w", err)
 	}
+
+	copy(d.Termination[:], termination)
 
 	r.Next(bytesPerInt32) // set readed data size to 4 bytes
 
@@ -156,7 +158,7 @@ func (d *DC6) Encode() []byte {
 	sw.PushUint32(d.Flags)
 	sw.PushUint32(d.Encoding)
 
-	sw.PushBytes(d.Termination...)
+	sw.PushBytes(d.Termination[:]...)
 
 	sw.PushUint32(uint32(d.Frames.NumberOfDirections()))
 	sw.PushUint32(uint32(d.Frames.FramesPerDirection()))
@@ -231,7 +233,6 @@ func scanlineType(b int) scanlineState {
 // Clone creates a copy of the DC6
 func (d *DC6) Clone() *DC6 {
 	clone := *d
-	copy(clone.Termination, d.Termination)
 	copy(clone.FramePointers, d.FramePointers)
 	clone.Frames = d.Frames.Clone()
 

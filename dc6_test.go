@@ -18,7 +18,7 @@ func getExampleDC6() *DC6 {
 	exampleDC6 := &DC6{
 		Flags:       1,
 		Encoding:    0,
-		Termination: []byte{238, 238, 238, 238},
+		Termination: [terminationSize]byte{238, 238, 238, 238},
 		// FramePointers:      []uint32{56, 100, 140, 180},
 		FramePointers: []uint32{56},
 		Frames:        dc6frames.New(),
