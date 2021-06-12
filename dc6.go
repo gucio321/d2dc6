@@ -31,25 +31,21 @@ const (
 
 // DC6 represents a DC6 file.
 type DC6 struct {
-	Flags              uint32
-	Encoding           uint32
-	Termination        []byte // 4 bytes
-	Directions         uint32
-	FramesPerDirection uint32
-	FramePointers      []uint32             // size is Directions*FramesPerDirection
-	Frames             *dc6frames.FrameGrid // size is Directions*FramesPerDirection
+	Flags         uint32
+	Encoding      uint32
+	Termination   []byte               // 4 bytes
+	FramePointers []uint32             // size is Directions*FramesPerDirection
+	Frames        *dc6frames.FrameGrid // size is Directions*FramesPerDirection
 }
 
 // New creates a new, empty DC6
 func New() *DC6 {
 	result := &DC6{
-		Flags:              0,
-		Encoding:           0,
-		Termination:        make([]byte, 4),
-		Directions:         0,
-		FramesPerDirection: 0,
-		FramePointers:      make([]uint32, 0),
-		Frames:             dc6frames.New(),
+		Flags:         0,
+		Encoding:      0,
+		Termination:   make([]byte, 4),
+		FramePointers: make([]uint32, 0),
+		Frames:        dc6frames.New(),
 	}
 
 	return result
@@ -77,7 +73,7 @@ func (d *DC6) Load(data []byte) error {
 		return err
 	}
 
-	frameCount := int(d.Directions * d.FramesPerDirection)
+	frameCount := int(d.Frames.NumberOfDirections() * d.Frames.FramesPerDirection())
 
 	d.FramePointers = make([]uint32, frameCount)
 	for i := 0; i < frameCount; i++ {
@@ -86,9 +82,6 @@ func (d *DC6) Load(data []byte) error {
 			return fmt.Errorf("reading pointer to frame %d: %w", i, err)
 		}
 	}
-
-	d.Frames.SetNumberOfDirections(int(d.Directions))
-	d.Frames.SetFramesPerDirection(int(d.FramesPerDirection))
 
 	return d.loadFrames(r)
 }
@@ -121,13 +114,19 @@ func (d *DC6) loadHeader(r *bitstream.Reader) error {
 
 	r.Next(bytesPerInt32) // set readed data size to 4 bytes
 
-	if d.Directions, err = r.Bytes().AsUInt32(); err != nil {
+	directions, err := r.Bytes().AsUInt32()
+	if err != nil {
 		return fmt.Errorf("reading directions number: %w", err)
 	}
 
-	if d.FramesPerDirection, err = r.Bytes().AsUInt32(); err != nil {
+	d.Frames.SetNumberOfDirections(int(directions))
+
+	framesPerDirection, err := r.Bytes().AsUInt32()
+	if err != nil {
 		return fmt.Errorf("error reading a number of frames per direction: %w", err)
 	}
+
+	d.Frames.SetFramesPerDirection(int(framesPerDirection))
 
 	return nil
 }
@@ -158,8 +157,8 @@ func (d *DC6) Encode() []byte {
 
 	sw.PushBytes(d.Termination...)
 
-	sw.PushUint32(d.Directions)
-	sw.PushUint32(d.FramesPerDirection)
+	sw.PushUint32(uint32(d.Frames.NumberOfDirections()))
+	sw.PushUint32(uint32(d.Frames.FramesPerDirection()))
 
 	// encode frame pointers
 	for _, i := range d.FramePointers {

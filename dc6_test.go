@@ -15,18 +15,16 @@ func TestDC6New(t *testing.T) {
 
 func getExampleDC6() *DC6 {
 	exampleDC6 := &DC6{
-		Flags:              1,
-		Encoding:           0,
-		Termination:        []byte{238, 238, 238, 238},
-		Directions:         0,
-		FramesPerDirection: 0,
+		Flags:       1,
+		Encoding:    0,
+		Termination: []byte{238, 238, 238, 238},
 		// FramePointers:      []uint32{56, 100, 140, 180},
-		FramePointers: []uint32{},
+		FramePointers: []uint32{56},
 		Frames:        dc6frames.New(),
 	}
 
-	exampleDC6.Frames.SetNumberOfDirections(int(exampleDC6.Directions))
-	exampleDC6.Frames.SetFramesPerDirection(int(exampleDC6.FramesPerDirection))
+	exampleDC6.Frames.SetNumberOfDirections(1)
+	exampleDC6.Frames.SetFramesPerDirection(1)
 	/*
 			grid: {
 				{

@@ -5,6 +5,7 @@ func New() *FrameGrid {
 	return &FrameGrid{
 		numberOfDirections: 0,
 		framesPerDirection: 0,
+		grid:               make([]Direction, 0),
 	}
 }
 
@@ -49,7 +50,7 @@ func (f *FrameGrid) SetFramesPerDirection(n int) {
 	for i := range f.grid {
 		if l := len(f.grid[i]); n > l {
 			for j := 0; j < n-l; j++ {
-				f.grid[i] = append(f.grid[i], &Frame{})
+				f.grid[i] = append(f.grid[i], newFrame())
 			}
 		}
 	}

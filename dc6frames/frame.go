@@ -13,6 +13,13 @@ const (
 	terminatorSize = 3
 )
 
+func newFrame() *Frame {
+	return &Frame{
+		FrameData:  make([]byte, 0),
+		Terminator: make([]byte, terminatorSize),
+	}
+}
+
 // Frame represents a single frame in a DC6.
 type Frame struct {
 	Flipped    uint32
@@ -78,6 +85,7 @@ func (frame *Frame) Load(r *bitstream.BitStream) error {
 
 // Encode encodes frame data into a byte slice
 func (f *Frame) Encode() []byte {
+	fmt.Println("encode")
 	sw := d2datautils.CreateStreamWriter()
 	sw.PushUint32(f.Flipped)
 	sw.PushUint32(f.Width)
