@@ -19,9 +19,7 @@ func getExampleDC6() *DC6 {
 		Flags:       1,
 		Encoding:    0,
 		Termination: [terminationSize]byte{238, 238, 238, 238},
-		// FramePointers:      []uint32{56, 100, 140, 180},
-		FramePointers: []uint32{56},
-		Frames:        dc6frames.New(),
+		Frames:      dc6frames.New(),
 	}
 
 	exampleDC6.Frames.SetNumberOfDirections(1)

@@ -32,20 +32,18 @@ const (
 
 // DC6 represents a DC6 file.
 type DC6 struct {
-	Flags         uint32
-	Encoding      uint32
-	Termination   [terminationSize]byte // 4 bytes
-	FramePointers []uint32              // size is Directions*FramesPerDirection
-	Frames        *dc6frames.FrameGrid  // size is Directions*FramesPerDirection
+	Flags       uint32
+	Encoding    uint32
+	Termination [terminationSize]byte // 4 bytes
+	Frames      *dc6frames.FrameGrid  // size is Directions*FramesPerDirection
 }
 
 // New creates a new, empty DC6
 func New() *DC6 {
 	result := &DC6{
-		Flags:         0,
-		Encoding:      0,
-		FramePointers: make([]uint32, 0),
-		Frames:        dc6frames.New(),
+		Flags:    0,
+		Encoding: 0,
+		Frames:   dc6frames.New(),
 	}
 
 	return result
@@ -75,9 +73,8 @@ func (d *DC6) Load(data []byte) error {
 
 	frameCount := d.Frames.NumberOfDirections() * d.Frames.FramesPerDirection()
 
-	d.FramePointers = make([]uint32, frameCount)
 	for i := 0; i < frameCount; i++ {
-		d.FramePointers[i], err = r.Next(bytesPerInt32).Bytes().AsUInt32()
+		_, err = r.Next(bytesPerInt32).Bytes().AsUInt32()
 		if err != nil {
 			return fmt.Errorf("reading pointer to frame %d: %w", i, err)
 		}
@@ -163,16 +160,30 @@ func (d *DC6) Encode() []byte {
 	sw.PushUint32(uint32(d.Frames.NumberOfDirections()))
 	sw.PushUint32(uint32(d.Frames.FramesPerDirection()))
 
-	// encode frame pointers
-	for _, i := range d.FramePointers {
-		sw.PushUint32(i)
+	numDirs := d.Frames.NumberOfDirections()
+	fpd := d.Frames.FramesPerDirection()
+	framesData := make([][][]byte, numDirs)
+	// encode frames
+	for dir := 0; dir < numDirs; dir++ {
+		framesData[dir] = make([][]byte, fpd)
+		for f := 0; f < fpd; f++ {
+			framesData[dir][f] = d.Frames.Direction(dir).Frame(f).Encode()
+		}
 	}
 
-	// encode frames
-	for dir := 0; dir < d.Frames.NumberOfDirections(); dir++ {
-		for f := 0; f < d.Frames.FramesPerDirection(); f++ {
-			data := d.Frames.Direction(dir).Frame(f).Encode()
-			sw.PushBytes(data...)
+	currentPosition := 24
+
+	// encode frame pointers
+	for dir := 0; dir < numDirs; dir++ {
+		for f := 0; f < fpd; f++ {
+			currentPosition += len(framesData[dir][f])
+			sw.PushUint32(uint32(currentPosition))
+		}
+	}
+
+	for _, dirData := range framesData {
+		for _, frameData := range dirData {
+			sw.PushBytes(frameData...)
 		}
 	}
 
@@ -233,7 +244,6 @@ func scanlineType(b int) scanlineState {
 // Clone creates a copy of the DC6
 func (d *DC6) Clone() *DC6 {
 	clone := *d
-	copy(clone.FramePointers, d.FramePointers)
 	clone.Frames = d.Frames.Clone()
 
 	return &clone
