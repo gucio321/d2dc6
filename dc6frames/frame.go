@@ -34,7 +34,7 @@ type Frame struct {
 }
 
 // Load loads frame data
-func (f *Frame) Load(r *bitstream.BitStream) error {
+func (f *Frame) Load(r *bitstream.Reader) error {
 	var err error
 
 	r.Next(bytesPerInt32) // set bytes len to uint32
