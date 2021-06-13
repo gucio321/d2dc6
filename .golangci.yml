@@ -21,6 +21,7 @@ linters-settings:
   goimports:
     local-prefixes: github.com/gucio321/d2dc6
   govet:
+    enable-all: true
     check-shadowing: true
   lll:
     line-length: 140

@@ -22,15 +22,15 @@ func newFrame() *Frame {
 
 // Frame represents a single frame in a DC6.
 type Frame struct {
+	FrameData  []byte
+	Terminator []byte
 	Flipped    uint32
-	Width      uint32
-	Height     uint32
 	OffsetX    int32
 	OffsetY    int32
 	Unknown    uint32
 	NextBlock  uint32
-	FrameData  []byte
-	Terminator []byte // 3 bytes
+	Width      uint32
+	Height     uint32
 }
 
 // Load loads frame data

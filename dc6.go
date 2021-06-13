@@ -32,10 +32,10 @@ const (
 
 // DC6 represents a DC6 file.
 type DC6 struct {
+	Frames      *dc6frames.FrameGrid
 	Flags       uint32
 	Encoding    uint32
-	Termination [terminationSize]byte // 4 bytes
-	Frames      *dc6frames.FrameGrid  // size is Directions*FramesPerDirection
+	Termination [terminationSize]byte
 }
 
 // New creates a new, empty DC6
