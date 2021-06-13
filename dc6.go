@@ -32,13 +32,13 @@ const (
 
 // DC6 represents a DC6 file.
 type DC6 struct {
-	Flags              uint32
+	Frames             [][]*d2dc6frame.DC6Frame
+	Termination        []byte
+	FramePointers      []uint32
 	Encoding           uint32
-	Termination        []byte // 4 bytes
 	Directions         uint32
 	FramesPerDirection uint32
-	FramePointers      []uint32                 // size is Directions*FramesPerDirection
-	Frames             [][]*d2dc6frame.DC6Frame // size is Directions*FramesPerDirection
+	Flags              uint32
 }
 
 // New creates a new, empty DC6
