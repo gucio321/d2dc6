@@ -27,7 +27,7 @@ type DC6Frame struct {
 }
 
 // Load loads frame data
-func Load(r *bitstream.BitStream) (*DC6Frame, error) {
+func Load(r *bitstream.Reader) (*DC6Frame, error) {
 	var err error
 
 	frame := &DC6Frame{}

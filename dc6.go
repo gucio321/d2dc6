@@ -71,7 +71,7 @@ func Load(data []byte) (*DC6, error) {
 func (d *DC6) Load(data []byte) error {
 	var err error
 
-	r := bitstream.FromBytes(data...)
+	r := bitstream.ReaderFromBytes(data...)
 
 	err = d.loadHeader(r)
 	if err != nil {
@@ -96,7 +96,7 @@ func (d *DC6) Load(data []byte) error {
 	return d.loadFrames(r)
 }
 
-func (d *DC6) loadHeader(r *bitstream.BitStream) error {
+func (d *DC6) loadHeader(r *bitstream.Reader) error {
 	var err error
 
 	r.Next(bytesPerInt32) // set readed data size to 4 bytes
@@ -135,7 +135,7 @@ func (d *DC6) loadHeader(r *bitstream.BitStream) error {
 	return nil
 }
 
-func (d *DC6) loadFrames(r *bitstream.BitStream) error {
+func (d *DC6) loadFrames(r *bitstream.Reader) error {
 	var err error
 
 	for dir := range d.Frames {
