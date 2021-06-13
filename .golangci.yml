@@ -21,6 +21,7 @@ linters-settings:
   goimports:
     local-prefixes: github.com/OpenDiablo2/OpenDiablo2
   govet:
+    enable-all: true
     check-shadowing: true
   lll:
     line-length: 140
