@@ -1,28 +1,28 @@
 package dc6frames
 
 // New creates a new frame grid
-func New() *FrameGrid {
-	return &FrameGrid{
+func New() *Frames {
+	return &Frames{
 		numberOfDirections: 0,
 		framesPerDirection: 0,
 		grid:               make([]Direction, 0),
 	}
 }
 
-// FrameGrid represents a grid of frames [directions][framesPerDirection]
-type FrameGrid struct {
+// Frames represents a grid of frames [directions][framesPerDirection]
+type Frames struct {
 	grid []Direction
 	numberOfDirections,
 	framesPerDirection int
 }
 
 // NumberOfDirections returns a number of directions in grid
-func (f *FrameGrid) NumberOfDirections() int {
+func (f *Frames) NumberOfDirections() int {
 	return f.numberOfDirections
 }
 
 // SetNumberOfDirections sets a number of directions
-func (f *FrameGrid) SetNumberOfDirections(n int) {
+func (f *Frames) SetNumberOfDirections(n int) {
 	if n == f.numberOfDirections {
 		return
 	}
@@ -43,12 +43,12 @@ func (f *FrameGrid) SetNumberOfDirections(n int) {
 }
 
 // FramesPerDirection returns a number of frames per each direction
-func (f *FrameGrid) FramesPerDirection() int {
+func (f *Frames) FramesPerDirection() int {
 	return f.framesPerDirection
 }
 
 // SetFramesPerDirection sets a number of frames per direction
-func (f *FrameGrid) SetFramesPerDirection(n int) {
+func (f *Frames) SetFramesPerDirection(n int) {
 	if n == f.framesPerDirection {
 		return
 	}
@@ -65,7 +65,7 @@ func (f *FrameGrid) SetFramesPerDirection(n int) {
 }
 
 // Direction returns a specified direction
-func (f *FrameGrid) Direction(d int) Direction {
+func (f *Frames) Direction(d int) Direction {
 	if d > len(f.grid) {
 		return nil
 	}
@@ -74,8 +74,8 @@ func (f *FrameGrid) Direction(d int) Direction {
 }
 
 // Clone clones frame grid
-func (f *FrameGrid) Clone() *FrameGrid {
-	clone := &FrameGrid{}
+func (f *Frames) Clone() *Frames {
+	clone := &Frames{}
 	clone.SetNumberOfDirections(f.numberOfDirections)
 	clone.SetFramesPerDirection(f.framesPerDirection)
 

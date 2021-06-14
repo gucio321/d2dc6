@@ -32,7 +32,7 @@ const (
 
 // DC6 represents a DC6 file.
 type DC6 struct {
-	Frames      *dc6frames.FrameGrid
+	Frames      *dc6frames.Frames
 	Flags       uint32
 	Encoding    uint32
 	Termination [terminationSize]byte
