@@ -3,8 +3,9 @@ package d2dc6
 import (
 	"testing"
 
-	"github.com/gucio321/d2dc6/d2dc6frame"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/gucio321/d2dc6/dc6frames"
 )
 
 func TestDC6New(t *testing.T) {
@@ -15,14 +16,16 @@ func TestDC6New(t *testing.T) {
 
 func getExampleDC6() *DC6 {
 	exampleDC6 := &DC6{
-		Flags:              1,
-		Encoding:           0,
-		Termination:        []byte{238, 238, 238, 238},
-		Directions:         2,
-		FramesPerDirection: 2,
-		FramePointers:      []uint32{56, 100, 140, 180},
-		Frames: [][]*d2dc6frame.DC6Frame{
-			{
+		Flags:       1,
+		Encoding:    0,
+		Termination: [terminationSize]byte{238, 238, 238, 238},
+		Frames:      dc6frames.New(),
+	}
+
+	exampleDC6.Frames.SetNumberOfDirections(1)
+	exampleDC6.Frames.SetFramesPerDirection(1)
+	/*
+			grid: {
 				{
 					Flipped:    0,
 					Width:      32,
@@ -71,7 +74,7 @@ func getExampleDC6() *DC6 {
 				},
 			},
 		},
-	}
+	*/
 
 	return exampleDC6
 }

@@ -19,7 +19,7 @@ linters-settings:
   gocyclo:
     min-complexity: 15
   goimports:
-    local-prefixes: github.com/OpenDiablo2/OpenDiablo2
+    local-prefixes: github.com/gucio321/d2dc6
   govet:
     enable-all: true
     check-shadowing: true
