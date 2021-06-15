@@ -1,3 +1,4 @@
+![CircleCI](https://img.shields.io/circleci/build/github/gucio321/d2dc6/master?style=flat)
 [![Go Report Card](https://goreportcard.com/badge/github.com/gucio321/d2dc6)](https://goreportcard.com/report/github.com/gucio321/d2dc6)
 [![GoDoc](https://pkg.go.dev/badge/github.com/gucio321/d2dc6?utm_source=godoc)](https://pkg.go.dev/mod/github.com/gucio321/d2dc6)
 
