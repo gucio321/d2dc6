@@ -1,4 +1,4 @@
-package dc6frames
+package frames
 
 // New creates a new frame grid
 func New() *Frames {

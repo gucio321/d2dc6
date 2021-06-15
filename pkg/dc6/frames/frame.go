@@ -1,4 +1,4 @@
-package dc6frames
+package frames
 
 import (
 	"fmt"

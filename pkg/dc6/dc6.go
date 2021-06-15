@@ -4,11 +4,11 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/gucio321/d2dc6/dc6frames"
-
 	"github.com/gravestench/bitstream"
 
 	"github.com/OpenDiablo2/OpenDiablo2/d2common/d2datautils"
+
+	"github.com/gucio321/d2dc6/pkg/dc6/frames"
 )
 
 const (
@@ -32,7 +32,7 @@ const (
 
 // DC6 represents a DC6 file.
 type DC6 struct {
-	Frames      *dc6frames.Frames
+	Frames      *frames.Frames
 	Flags       uint32
 	Encoding    uint32
 	Termination [terminationSize]byte
@@ -43,7 +43,7 @@ func New() *DC6 {
 	result := &DC6{
 		Flags:    0,
 		Encoding: 0,
-		Frames:   dc6frames.New(),
+		Frames:   frames.New(),
 	}
 
 	return result

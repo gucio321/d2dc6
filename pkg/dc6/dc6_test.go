@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/gucio321/d2dc6/dc6frames"
+	"github.com/gucio321/d2dc6/pkg/dc6/frames"
 )
 
 func TestDC6New(t *testing.T) {
@@ -19,7 +19,7 @@ func getExampleDC6() *DC6 {
 		Flags:       1,
 		Encoding:    0,
 		Termination: [terminationSize]byte{238, 238, 238, 238},
-		Frames:      dc6frames.New(),
+		Frames:      frames.New(),
 	}
 
 	exampleDC6.Frames.SetNumberOfDirections(1)
