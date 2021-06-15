@@ -73,11 +73,10 @@ func (d *DC6) Load(data []byte) error {
 
 	frameCount := d.Frames.NumberOfDirections() * d.Frames.FramesPerDirection()
 
-	for i := 0; i < frameCount; i++ {
-		_, err = r.Next(bytesPerInt32).Bytes().AsUInt32()
-		if err != nil {
-			return fmt.Errorf("reading pointer to frame %d: %w", i, err)
-		}
+	// frame pointers - skip
+	_, err = r.Next(frameCount * bytesPerInt32).Bytes().AsBytes()
+	if err != nil {
+		return fmt.Errorf("reading frame pointers: %w", err)
 	}
 
 	return d.loadFrames(r)
@@ -162,8 +161,9 @@ func (d *DC6) Encode() []byte {
 
 	numDirs := d.Frames.NumberOfDirections()
 	fpd := d.Frames.FramesPerDirection()
-	framesData := make([][][]byte, numDirs)
+
 	// encode frames
+	framesData := make([][][]byte, numDirs)
 	for dir := 0; dir < numDirs; dir++ {
 		framesData[dir] = make([][]byte, fpd)
 		for f := 0; f < fpd; f++ {
@@ -171,13 +171,19 @@ func (d *DC6) Encode() []byte {
 		}
 	}
 
+	// current position in stream - terrible workaround,
+	// but d2datautils.StreamWriter doesn't currently hav any
+	// method to get byte position
 	currentPosition := 24
+
+	// frames data starts afte a frame pointers section
+	currentPosition += numDirs * fpd * bytesPerInt32
 
 	// encode frame pointers
 	for dir := 0; dir < numDirs; dir++ {
 		for f := 0; f < fpd; f++ {
-			currentPosition += len(framesData[dir][f])
 			sw.PushUint32(uint32(currentPosition))
+			currentPosition += len(framesData[dir][f])
 		}
 	}
 
