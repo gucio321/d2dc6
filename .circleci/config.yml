@@ -4,16 +4,18 @@ jobs:
   build:
     working_directory: ~/repo
     docker:
-      - image: circleci/golang:1.15.8
+      - image: golang:1.20.4
     steps:
       - checkout
-      - run: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin
+      - run: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.52.2
       - restore_cache:
           keys:
             - go-mod-v4-{{ checksum "go.sum" }}
       - run:
           name: Install Dependencies
-          command: go mod download
+          command: |
+            go mod download
+            go install gotest.tools/gotestsum@latest
       - save_cache:
           key: go-mod-v4-{{ checksum "go.sum" }}
           paths:
@@ -22,7 +24,7 @@ jobs:
           name: Run tests
           command: |
             mkdir -p /tmp/test-reports
-            gotestsum --junitfile /tmp/test-reports/unit-tests.xml
+            go run gotest.tools/gotestsum@latest --junitfile /tmp/test-reports/unit-tests.xml
       - store_test_results:
           path: /tmp/test-reports
       - run: golangci-lint run ./...
