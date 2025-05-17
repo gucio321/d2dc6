@@ -1,0 +1,106 @@
+{
+  "formatters": {
+    "enable": [
+      "gofmt",
+      "goimports"
+    ],
+    "exclusions": {
+      "generated": "lax",
+      "paths": [
+        "third_party$",
+        "builtin$",
+        "examples$"
+      ]
+    },
+    "settings": {
+      "goimports": {
+        "local-prefixes": [
+          "github.com/gucio321/d2dc6"
+        ]
+      }
+    }
+  },
+  "issues": {
+    "max-same-issues": 0
+  },
+  "linters": {
+    "default": "none",
+    "enable": [
+      "bodyclose",
+      "dogsled",
+      "dupl",
+      "errcheck",
+      "errorlint",
+      "funlen",
+      "gochecknoglobals",
+      "gochecknoinits",
+      "gocognit",
+      "goconst",
+      "gocritic",
+      "gocyclo",
+      "goprintffuncname",
+      "gosec",
+      "govet",
+      "ineffassign",
+      "lll",
+      "makezero",
+      "misspell",
+      "mnd",
+      "nakedret",
+      "nolintlint",
+      "prealloc",
+      "revive",
+      "rowserrcheck",
+      "staticcheck",
+      "unconvert",
+      "unparam",
+      "unused",
+      "whitespace",
+      "wrapcheck",
+      "wsl"
+    ],
+    "exclusions": {
+      "generated": "lax",
+      "paths": [
+        "third_party$",
+        "builtin$",
+        "examples$"
+      ]
+    },
+    "settings": {
+      "dupl": {
+        "threshold": 100
+      },
+      "funlen": {
+        "lines": 100,
+        "statements": 50
+      },
+      "goconst": {
+        "min-len": 2,
+        "min-occurrences": 2
+      },
+      "gocritic": {
+        "enabled-tags": [
+          "diagnostic",
+          "experimental",
+          "opinionated",
+          "performance",
+          "style"
+        ]
+      },
+      "gocyclo": {
+        "min-complexity": 15
+      },
+      "govet": {
+        "enable-all": true
+      },
+      "lll": {
+        "line-length": 140
+      },
+      "misspell": {
+        "locale": "US"
+      }
+    }
+  },
+  "version": "2"
+}

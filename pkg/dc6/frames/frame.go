@@ -93,7 +93,7 @@ func (f *Frame) Encode() []byte {
 	sw.PushInt32(f.OffsetY)
 	sw.PushUint32(f.Unknown)
 	sw.PushUint32(f.NextBlock)
-	sw.PushUint32(uint32(len(f.FrameData)))
+	sw.PushUint32(uint32(len(f.FrameData))) //nolint:gosec // this is ok as we decode that
 	sw.PushBytes(f.FrameData...)
 	sw.PushBytes(f.Terminator...)
 
