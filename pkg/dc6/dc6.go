@@ -156,8 +156,8 @@ func (d *DC6) Encode() []byte {
 
 	sw.PushBytes(d.Termination[:]...)
 
-	sw.PushUint32(uint32(d.Frames.NumberOfDirections()))
-	sw.PushUint32(uint32(d.Frames.FramesPerDirection()))
+	sw.PushUint32(uint32(d.Frames.NumberOfDirections())) //nolint:gosec // this is ok as we decode that
+	sw.PushUint32(uint32(d.Frames.FramesPerDirection())) //nolint:gosec // this is ok as we decode that
 
 	numDirs := d.Frames.NumberOfDirections()
 	fpd := d.Frames.FramesPerDirection()
@@ -182,7 +182,7 @@ func (d *DC6) Encode() []byte {
 	// encode frame pointers
 	for dir := 0; dir < numDirs; dir++ {
 		for f := 0; f < fpd; f++ {
-			sw.PushUint32(uint32(currentPosition))
+			sw.PushUint32(uint32(currentPosition)) //nolint:gosec // this is ok as we decode that
 			currentPosition += len(framesData[dir][f])
 		}
 	}
